@@ -3,6 +3,7 @@ import PySimpleGUI as sg
 from faker import Faker
 from faker.providers import DynamicProvider
 import pandas as pd
+from fuzzylogic import inference_mamdani
 
 
 flatsfile ='flats.csv'
@@ -174,9 +175,37 @@ def create_UI():
                 )
 
     window.close()
+
+    def __init__(
+            self,
+            price_normalizer: PriceNormalizer,
+            input_lvs: List[Dict[str, Any]],
+            output_lvs: Dict[str, Any],
+            rule_base: List[Tuple[Tuple, str]]
+    ):
+        self.input_lvs = deepcopy(input_lvs)
+        self.output_lvs = deepcopy(output_lvs)
+
+        inference_mamdani.preprocessing(
+            self.input_lvs,
+            self.output_lvs
+        )
 def doCalculate(area, floor, district, metroDist, rooms, renovation):
     print(area, floor, district, metroDist, rooms, renovation)
-
+    crisp_values = (
+        area,
+        floor,
+        district,
+        metroDist,
+        rooms,
+        renovation
+    )
+    crisp_result, word = inference_mamdani.process(
+        self.input_lvs,
+        self.output_lvs,
+        self.rule_base,
+        crisp_values
+    )
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
